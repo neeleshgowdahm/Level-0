@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Country Details using REST API</title>
+
+    <!-- CSS INSIDE HTML -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef2f3;
+        }
+
+        .container {
+            width: 420px;
+            margin: 100px auto;
+            padding: 20px;
+            background: #ffffff;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 25px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        img {
+            width: 150px;
+            margin-top: 10px;
+        }
+
+        #result {
+            margin-top: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Country Information</h2>
+
+    <input type="text" id="countryInput" placeholder="Enter country name">
+    <br>
+    <button onclick="getCountryDetails()">Search</button>
+
+    <div id="result"></div>
+</div>
+
+<!-- JAVASCRIPT INSIDE HTML -->
+<script>
+    // 🔑 API KEY PLACED HERE (for APIs that require it)
+    const API_KEY = "d32258bd-b2fa-4c01-ac62-c0416f4561bb"; 
+    // NOTE: REST Countries API does NOT require a key.
+    // This is shown only to demonstrate where API keys are stored.
+
+    function getCountryDetails() {
+        const countryName = document.getElementById("countryInput").value;
+        const resultDiv = document.getElementById("result");
+
+        if (countryName === "") {
+            resultDiv.innerHTML = "Please enter a country name.";
+            return;
+        }
+
+        // 🌍 REST COUNTRIES API CALL
+        fetch("https://restcountries.com/v3.1/name/" + countryName)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Country not found");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const country = data[0];
+
+                resultDiv.innerHTML = `
+                    <h3>${country.name.common}</h3>
+                    <img src="${country.flags.png}" alt="Flag">
+                    <p><strong>Capital:</strong> ${country.capital}</p>
+                    <p><strong>Region:</strong> ${country.region}</p>
+                    <p><strong>Population:</strong> ${country.population}</p>
+                    <p><strong>Currency:</strong> ${Object.values(country.currencies)[0].name}</p>
+                `;
+            })
+            .catch(error => {
+                resultDiv.innerHTML = "Country not found!";
+            });
+    }
+</script>
+
+</body>
+</html>
